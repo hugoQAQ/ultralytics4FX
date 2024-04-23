@@ -39,5 +39,8 @@ class DetectionPredictor(BasePredictor):
             orig_img = orig_imgs[i]
             pred[:, :4] = ops.scale_boxes(img.shape[2:], pred[:, :4], orig_img.shape)
             img_path = self.batch[0][i]
-            results.append(Results(orig_img, path=img_path, names=self.model.names, boxes=pred))
+            # results.append(Results(orig_img, path=img_path, names=self.model.names, boxes=pred))
+            nc = int(pred.shape[1]/2)
+            logits = pred[:, -nc:].cpu().numpy()
+            results.append(Results(orig_img, path=img_path, names=self.model.names, boxes=pred[:, :-nc], logits=logits))
         return results

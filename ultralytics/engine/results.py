@@ -94,7 +94,7 @@ class Results(SimpleClass):
         tojson(normalize=False): Converts detection results to JSON format.
     """
 
-    def __init__(self, orig_img, path, names, boxes=None, masks=None, probs=None, keypoints=None, obb=None) -> None:
+    def __init__(self, orig_img, path, names, boxes=None, masks=None, probs=None, keypoints=None, obb=None, logits=None) -> None:
         """
         Initialize the Results class.
 
@@ -120,6 +120,7 @@ class Results(SimpleClass):
         self.path = path
         self.save_dir = None
         self._keys = "boxes", "masks", "probs", "keypoints", "obb"
+        self.logits = logits
 
     def __getitem__(self, idx):
         """Return a Results object for the specified index."""
@@ -142,6 +143,8 @@ class Results(SimpleClass):
             self.probs = probs
         if obb is not None:
             self.obb = OBB(obb, self.orig_shape)
+        if logits is not None:
+            self.logits = logits
 
     def _apply(self, fn, *args, **kwargs):
         """

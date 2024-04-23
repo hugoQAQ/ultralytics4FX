@@ -217,7 +217,8 @@ def non_max_suppression(
     nc = nc or (prediction.shape[1] - 4)  # number of classes
     nm = prediction.shape[1] - nc - 4
     mi = 4 + nc  # mask start index
-    xc = prediction[:, 4:mi].amax(1) > conf_thres  # candidates
+    xc = prediction[:, 4:mi].sigmoid().amax(1) > conf_thres  # candidates
+    # xc = prediction[:, 4:mi].amax(1) > conf_thres 
 
     # Settings
     # min_wh = 2  # (pixels) minimum box width and height
@@ -252,6 +253,9 @@ def non_max_suppression(
 
         # Detections matrix nx6 (xyxy, conf, cls)
         box, cls, mask = x.split((4, nc, nm), 1)
+        # add for FX
+        mask = cls
+        cls = cls.sigmoid()
 
         if multi_label:
             i, j = torch.where(cls > conf_thres)
