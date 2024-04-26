@@ -90,7 +90,7 @@ class DetectionValidator(BaseValidator):
             self.args.conf,
             self.args.iou,
             labels=self.lb,
-            multi_label=True,
+            multi_label=False,
             agnostic=self.args.single_cls,
             max_det=self.args.max_det,
         )
@@ -144,7 +144,6 @@ class DetectionValidator(BaseValidator):
             predn = self._prepare_pred(pred, pbatch)
             stat["conf"] = predn[:, 4]
             stat["pred_cls"] = predn[:, 5]
-
             # Evaluate
             if nl:
                 stat["tp"] = self._process_batch(predn, bbox, cls)
@@ -272,6 +271,7 @@ class DetectionValidator(BaseValidator):
                     + (1 if self.is_lvis else 0),  # index starts from 1 if it's lvis
                     "bbox": [round(x, 3) for x in b],
                     "score": round(p[4], 5),
+                    "logits":p[6:]
                 }
             )
 
